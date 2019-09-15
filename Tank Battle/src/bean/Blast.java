@@ -6,8 +6,25 @@ import utils.DrawUtils;
 
 import java.io.IOException;
 
+/**
+ * 爆炸物
+ */
 public class Blast extends Element {
+    /**
+     * 用来控制大小爆炸
+     */
+    private int limit = 0;
+    /**
+     * 判断是否大爆炸
+     */
+    private boolean isBigBoom = false;
+
     public Blast(Element e) {
+        this(e,false);
+    }
+
+    public Blast(Element e , boolean isBigBoom) {
+        this.isBigBoom = isBigBoom;
         int blastWidth = 0;
         int blastHeight = 0;
 
@@ -36,19 +53,18 @@ public class Blast extends Element {
     public void draw() {
 
         // 通过isBigBoom的值, 修改limit控制是否是大爆炸
-        /*if(isBigBoom == true) {
+        if(isBigBoom == true) {
             limit = 0;
         }else {
             limit = 3;
-        }*/
+        }
 
         try {
-            for(int i = 0; i < Constants.IMG_BLAST_ARRAY.length ; i++) {
+            for(int i = 0; i < Constants.IMG_BLAST_ARRAY.length - limit ; i++) {
                 DrawUtils.draw(Constants.IMG_BLAST_ARRAY[i], x, y);
             }
             // 删除爆炸物
             Game.list.remove(this);
-            //Game.list.remove(this);
         } catch (IOException e) {
             e.printStackTrace();
         }

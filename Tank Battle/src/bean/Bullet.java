@@ -2,13 +2,23 @@ package bean;
 
 import Game.Constants;
 import Game.Game;
-import business.AttactedAble;
+import business.AttackedAble;
 import utils.CollsionUtils;
 import utils.DrawUtils;
+import utils.SoundUtils;
 
 import java.io.IOException;
 
+/**
+ * 子弹
+ */
 public class Bullet extends Element {
+
+    /**
+     *
+     */
+    private boolean isBigBoomMusic = false;
+
 
     /**
      * 子弹的攻击力
@@ -22,16 +32,30 @@ public class Bullet extends Element {
 
     /**
      * 子弹的方向
+     *
      * @param tank
      */
     Direction direction;
 
 
     public Bullet(Tank tank) {
+
+        /**
+         * 播放发射子弹的音乐
+         * 为什么要放在这里?
+         *      如果放在按键监听,不一定会发射出来
+         *      但是子弹被创建的时候,是一定会发射出来的
+         */
+        try {
+            SoundUtils.play(Constants.MUSIC_FIRE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         //子弹的坐标和坦克的坐标有关联
         //设置子弹的坐标
         this.x = tank.x + tank.x / 4;
-        this.y = tank.y - tank.y/4;
+        this.y = tank.y - tank.y / 4;
 
         //坦克的方向
         direction = tank.getDirection();
@@ -64,11 +88,11 @@ public class Bullet extends Element {
                 break;
             case LEFT:
                 x = (int) (tankX - bulletWidth / 2.0f + 0.5f);
-                y = (int) (tankY + (tankHeight- bulletHeight) / 2.0f + 0.5f);
+                y = (int) (tankY + (tankHeight - bulletHeight) / 2.0f + 0.5f);
                 break;
             case RIGHT:
                 x = (int) (tankX + tankWidth - bulletWidth / 2.0f + 0.5f);
-                y = (int) (tankY + (tankHeight- bulletHeight) / 2.0f + 0.5f);
+                y = (int) (tankY + (tankHeight - bulletHeight) / 2.0f + 0.5f);
                 break;
 
         }
@@ -78,12 +102,11 @@ public class Bullet extends Element {
     public void draw() {
         //检测碰撞
         for (Element e : Game.list) {
-            if (checkAttact(e)) {
+            if (checkAttack(e)) {
                 System.out.println("shot in " + e.getClass().getName());
                 return;
             }
         }
-
 
         //根据不同的方向,画不同的子弹
         switch (direction) {
@@ -91,7 +114,7 @@ public class Bullet extends Element {
             case UP:
                 try {
                     y -= speed;
-                    DrawUtils.draw(Constants.IMG_BULLET_UP,x,y);
+                    DrawUtils.draw(Constants.IMG_BULLET_UP, x, y);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -99,7 +122,7 @@ public class Bullet extends Element {
             case DOWN:
                 try {
                     y += speed;
-                    DrawUtils.draw(Constants.IMG_BULLET_DOWN,x,y);
+                    DrawUtils.draw(Constants.IMG_BULLET_DOWN, x, y);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -107,7 +130,7 @@ public class Bullet extends Element {
             case LEFT:
                 try {
                     x -= speed;
-                    DrawUtils.draw(Constants.IMG_BULLET_LEFT,x,y);
+                    DrawUtils.draw(Constants.IMG_BULLET_LEFT, x, y);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -115,7 +138,7 @@ public class Bullet extends Element {
             case RIGHT:
                 try {
                     x += speed;
-                    DrawUtils.draw(Constants.IMG_BULLET_RIGHT ,x,y);
+                    DrawUtils.draw(Constants.IMG_BULLET_RIGHT, x, y);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -127,12 +150,12 @@ public class Bullet extends Element {
      * 此方法用来判断子弹是否应该被销毁
      */
     public boolean isDestroy() {
-        return  x < 0 || y < 0 || x > Constants.WINDOW_WIDTH || y > Constants.WINDOW_HEIGHT;
+        return x < 0 || y < 0 || x > Constants.WINDOW_WIDTH || y > Constants.WINDOW_HEIGHT;
     }
 
-    public boolean checkAttact(Element e) {
+    public boolean checkAttack(Element e) {
         //过滤碰撞
-        if (!(e instanceof AttactedAble)) {
+        if (!(e instanceof AttackedAble)) {
             return false;
         }
 
@@ -149,9 +172,10 @@ public class Bullet extends Element {
         int h2 = 8;
 
 
-         boolean isAttact = CollsionUtils.isCollsionWithRect(x1, y1, w1, h1, x2, y2, w2, h2);
+        boolean isAttack = CollsionUtils.isCollsionWithRect(x1, y1, w1, h1, x2, y2, w2, h2);
 
-        if (isAttact) {
+        if (isAttack) {
+
             //销毁子弹
             Game.list.remove(this);
 
@@ -159,7 +183,7 @@ public class Bullet extends Element {
             if (e instanceof Wall) {
 
                 //墙被击打,创建爆炸物对象
-                Blast b = ((Wall) e).Attacted();
+                Blast blast = ((Wall) e).Attacked();
 
 
                 //剩下的血量
@@ -168,30 +192,59 @@ public class Bullet extends Element {
                 ((Wall) e).setBlood(blood2);
                 //判断销毁
                 if (((Wall) e).getBlood() <= 0) {
-                    b = ((Wall) e).broken();
+                    //被打碎的时候 产生大爆炸
+                    blast = ((Wall) e).broken();
                     Game.list.remove(e);
+                    isBigBoomMusic = true;
                 }
 
                 //添加到集合中
-                Game.list.add(b);
+                Game.list.add(blast);
             }
 
 
             //打中了铁
             if (e instanceof Steel) {
+
+                //铁墙被击打,创建爆炸物对象
+                Blast blast = ((Steel) e).Attacked();
+
+
                 //剩下的血量
                 int blood2 = ((Steel) e).getBlood() - power;
                 //赋值到当前血量
                 ((Steel) e).setBlood(blood2);
                 //判断销毁
                 if (((Steel) e).getBlood() <= 0) {
+                    //被打碎的时候 产生大爆炸
+                    blast = ((Steel) e).broken();
                     Game.list.remove(e);
+                    isBigBoomMusic = true;
                 }
 
+                //添加到集合中
+                Game.list.add(blast);
+
             }
+
+            /**
+             * 利用标志来决定播放什么音乐
+             */
+            try {
+                if (isBigBoomMusic) {
+                    SoundUtils.play(Constants.MUSIC_BLAST);
+                }else {
+                    SoundUtils.play(Constants.MUSIC_HIT);
+                }
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+
+
         }
 
-        return isAttact;
+        return isAttack;
 
     }
 

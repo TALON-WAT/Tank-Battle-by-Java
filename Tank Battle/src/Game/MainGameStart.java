@@ -4,7 +4,7 @@ package Game;
  *  游戏运行主方法
  */
 
-public class MainStartApp {
+public class MainGameStart {
     public static void main(String[] args) {
         String title = Constants.TITLE;
         int width = Constants.WINDOW_WIDTH;

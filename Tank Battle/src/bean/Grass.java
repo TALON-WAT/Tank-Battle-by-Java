@@ -5,6 +5,9 @@ import utils.DrawUtils;
 
 import java.io.IOException;
 
+/**
+ * 草
+ */
 public class Grass extends Element {
 
     public Grass(int x,int y) {

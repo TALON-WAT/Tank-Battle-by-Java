@@ -3,6 +3,8 @@ package Game;
     用来存放配置信息和常量
  */
 
+import java.util.stream.Stream;
+
 public class Constants {
     /**
      * 游戏标题 Game Title
@@ -69,6 +71,7 @@ public class Constants {
     public static final String IMG_BULLET_DOWN = "res/img/bullet_d.gif";
     public static final String IMG_BULLET_LEFT = "res/img/bullet_l.gif";
     public static final String IMG_BULLET_RIGHT = "res/img/bullet_r.gif";
+
     /**
      * 爆炸物的图片资源
      */
@@ -83,4 +86,20 @@ public class Constants {
             "res/img/blast_8.gif"
     };
 
+    /**
+     * 游戏开始的音乐资源
+     */
+    public static final String MUSIC_START = "res/snd/start.wav";
+    /**
+     * 坦克射击的音乐资源
+     */
+    public static final String MUSIC_FIRE = "res/snd/fire.wav";
+    /**
+     * 子弹击中的音乐资源
+     */
+    public static final String MUSIC_HIT = "res/snd/hit.wav";
+    /**
+     * 爆炸的音乐资源
+     */
+    public static final String MUSIC_BLAST = "res/snd/blast.wav";
 }

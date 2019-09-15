@@ -1,14 +1,17 @@
 package bean;
 
 import Game.Constants;
-import business.AttactedAble;
+import business.AttackedAble;
 import business.BlockAble;
 import business.BrokenAble;
 import utils.DrawUtils;
 
 import java.io.IOException;
 
-public class Steel extends Element implements BlockAble , AttactedAble , BrokenAble {
+/**
+ * 铁
+ */
+public class Steel extends Element implements BlockAble , AttackedAble, BrokenAble {
     /**
      * 血量
      */
@@ -37,14 +40,15 @@ public class Steel extends Element implements BlockAble , AttactedAble , BrokenA
     }
 
     @Override
-    public Blast Attacted() {
+    public Blast Attacked() {
+        //创造爆炸物对象并返回
         Blast blast = new Blast(this);
         return blast;
     }
 
     @Override
     public Blast broken() {
-        Blast blast = new Blast(this);
+        Blast blast = new Blast(this,true);
         return blast;
     }
 }

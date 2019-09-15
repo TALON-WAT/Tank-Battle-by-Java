@@ -33,7 +33,11 @@ public class Tank extends Element {
     /**
      * 速度
      */
-    private int speed = 32;
+    private int speed = 0;
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
 
     //行为
 
@@ -49,6 +53,11 @@ public class Tank extends Element {
      * 坦克的生成功能 draw tank
      */
     public void draw() {
+
+        //坦克平滑移动,
+        move(direction);
+
+
         try {
             //根据不同的方向,画不同的图片资源
             switch (direction) {
@@ -57,15 +66,12 @@ public class Tank extends Element {
                     break;
                 case DOWN:
                     DrawUtils.draw(Constants.IMG_TANK_DOWN,x,y);
-
                     break;
                 case LEFT:
                     DrawUtils.draw(Constants.IMG_TANK_LEFT,x,y);
-
                     break;
                 case RIGHT:
                     DrawUtils.draw(Constants.IMG_TANK_RIGHT,x,y);
-
                     break;
             }
         } catch (IOException e) {
@@ -102,15 +108,12 @@ public class Tank extends Element {
                 break;
             case DOWN:
                 y += speed;
-
                 break;
             case LEFT:
                 x -= speed;
-
                 break;
             case RIGHT:
                 x += speed;
-
                 break;
         }
 

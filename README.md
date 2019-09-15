@@ -2,4 +2,7 @@
 
 A little Game by Java~
 
-balabalbalblaalaa...
+Just single tank now.
+
+Balabalbalblaalaa...
+
